@@ -830,7 +830,9 @@ class View {
                     console.warn(message);
                 }
 
-                this._afterRender();
+                if (this.element) {
+                    this._afterRender();
+                }
 
                 if (typeof callback === 'function') {
                     callback();
@@ -1891,10 +1893,10 @@ class View {
     }
 
     /**
-     * Remove the view and all nested tree. Removes an element from DOM. Triggers the 'remove' event.
+     * Remove the view and all nested tree. Removes the element from DOM. Triggers the 'remove' event.
      *
      * @public
-     * @param {boolean} [dontEmpty] Skips emptying an element container.
+     * @param {boolean} [dontEmpty] Skips emptying the element container.
      */
     remove(dontEmpty) {
         this.cancelRender();
@@ -1928,6 +1930,10 @@ class View {
         this._isFullyRendered = false;
         this._isBeingRendered = false;
         this._isRemoved = true;
+
+        this.element = undefined;
+        this.$el = $();
+        this.el = undefined;
 
         return this;
     }
