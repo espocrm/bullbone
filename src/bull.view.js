@@ -969,7 +969,7 @@ class View {
         for (const key in this.nestedViews) {
             const nestedView = this.nestedViews[key];
 
-            if (!nestedView.notToRender) {
+            if (!nestedView.notToRender && nestedView.element) {
                 nestedView._afterRender();
             }
         }
