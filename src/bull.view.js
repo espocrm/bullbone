@@ -962,14 +962,19 @@ class View {
     /** @private */
     _afterRender() {
         this._isBeingRendered = false;
-        this._isRendered = true;
 
         this.trigger('after:render-internal', this);
+
+        if (this.element) {
+            this._isRendered = true;
+        } else {
+            return;
+        }
 
         for (const key in this.nestedViews) {
             const nestedView = this.nestedViews[key];
 
-            if (!nestedView.notToRender && nestedView.element) {
+            if (!nestedView.notToRender) {
                 nestedView._afterRender();
             }
         }
