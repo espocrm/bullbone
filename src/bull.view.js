@@ -699,6 +699,7 @@ class View {
      * A view content.
      *
      * @return {import('snabbdom').VNode|undefined}
+     * @experimental
      */
     content() {
         return undefined;
@@ -708,6 +709,7 @@ class View {
      * To be called in the content method of a parent view to get the child content.
      *
      * @return {import('snabbdom').VNode|undefined}
+     * @experimental
      */
     node() {
         if (!this.useVirtualDom) {
