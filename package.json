@@ -25,6 +25,6 @@
     "underscore": "^1.13.4"
   },
   "dependencies": {
-    "snabbdom": "^3.6.2"
+    "snabbdom": "^3.6.3"
   }
 }
