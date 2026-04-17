@@ -2114,7 +2114,7 @@ class View {
     }
 
     /**
-     * Removes a nested view for cases when it's supposed that this view can be re-used in future.
+     * Removes a nested view for cases when it's supposed that this view can be re-used in the future.
      *
      * @param {string} key A view key.
      */
@@ -2274,6 +2274,7 @@ class View {
 
         this.element = undefined;
         this.$el = $();
+        // noinspection JSDeprecatedSymbols
         this.el = undefined;
 
         return this;
