@@ -9,8 +9,8 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-test": "npx rollup test/entry.js --format umd --file dist/test.umd.js --external jquery,handlebars,underscore --globals jquery:$,handlebars:Handlebard,underscore:_ --config rollup.config.mjs",
-    "build-umd": "npx rollup src/bullbone.js --format umd --file dist/bullbone.umd.js --name bullbone --amd.id bullbone --external jquery,handlebars,underscore --globals jquery:$,handlebars:Handlebard,underscore:_ --config rollup.config.mjs",
+    "build-test": "npx rollup test/entry.js --format umd --file dist/test.umd.js --external jquery,handlebars,underscore --globals jquery:$,handlebars:Handlebars,underscore:_ --config rollup.config.mjs",
+    "build-umd": "npx rollup src/bullbone.js --format umd --file dist/bullbone.umd.js --name bullbone --amd.id bullbone --external jquery,handlebars,underscore --globals jquery:$,handlebars:Handlebars,underscore:_ --config rollup.config.mjs",
     "build-esm": "npx rollup src/bullbone.js --format esm --file dist/bullbone.js --external jquery,handlebars,underscore --config rollup.config.mjs",
     "prepare": "npm run build-umd && npm run build-esm"
   },
