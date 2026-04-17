@@ -2447,7 +2447,11 @@ const isEsClass = fn => {
         Object.getOwnPropertyDescriptor(fn, 'prototype')?.writable === false;
 };
 
-View.extend = function (protoProps, staticProps) {
+/** @type {any} */
+const V = View;
+
+// @ts-ignore
+V.extend = function (protoProps, staticProps) {
     const parent = this;
 
     let child;
