@@ -29,8 +29,8 @@ const patch = init(
  * @property {boolean} [notToRender] Not to render on ready.
  * @property {Object.<string, ViewNestedViewItem>} [views] Child view definitions.
  * @property {string} [name] A view name.
- * @property {Bull.Model} [model] A model.
- * @property {Bull.Collection} [collection] A collection.
+ * @property {BullModel} [model] A model.
+ * @property {BullCollection} [collection] A collection.
  * @property {Bull.View.DomEvents} [events] DOM events.
  * @property {boolean} [setViewBeforeCallback] A child view will be set to a parent before a promise is resolved.
  */
@@ -42,7 +42,7 @@ const patch = init(
 /**
  * A model.
  *
- * @typedef {Object} Bull~Model
+ * @typedef {Object} BullModel
  * @type Object
  * @mixes Bull.Events
  */
@@ -50,7 +50,7 @@ const patch = init(
 /**
  * A collection.
  *
- * @typedef {Object} Bull~Collection
+ * @typedef {Object} BullCollection
  * @type Object
  * @mixes Bull.Events
  */
@@ -109,7 +109,7 @@ const patch = init(
  */
 
 /**
- * @typedef {'click'|'mousedown'|'keydown'|string} Bull.View~domEventType
+ * @typedef {'click'|'mousedown'|'keydown'|string} ViewDomEventType
  */
 
 /**
@@ -195,9 +195,9 @@ const patch = init(
  */
 
 /**
- * @typedef {Object} Bull.View~nestedViewItemDefs
+ * @typedef {Object} ViewNestedViewItemDefs
  * @property {string} name A name.
- * @property {string|Bull.View|boolean} [view] A view.
+ * @property {string|View|boolean} [view] A view.
  * @property {string} [template] A template.
  * @property {boolean} [notToRender] Not to render.
  * @property {string} [selector] A relative selector.
@@ -400,7 +400,7 @@ class View {
      */
     _template = null
     /**
-     * @type {Object.<string, Bull.View~nestedViewItemDefs>|null}
+     * @type {Object.<string, ViewNestedViewItemDefs>|null}
      * @private
      */
     _nestedViewDefs = null
@@ -505,7 +505,7 @@ class View {
     /**
      * Add a DOM event handler. To be called in `setup` method.
      *
-     * @param {Bull.View~domEventType} type An event type.
+     * @param {ViewDomEventType} type An event type.
      * @param {string} selector A CSS selector.
      * @param {ViewDomEventHandlerCallback|string} handler A handler.
      */
@@ -540,7 +540,7 @@ class View {
      *   templator: Bull.Templator,
      *   layouter: Bull.Layouter,
      *   helper?: Object,
-     *   onReady?: function(Bull.View): void,
+     *   onReady?: function(View): void,
      *   preCompiledTemplates?: Object,
      * }} data
      * @internal
@@ -1166,7 +1166,7 @@ class View {
     }
 
     /**
-     * @typedef {Object} Bull.View~reRenderOptions
+     * @typedef {Object} View~reRenderOptions
      * @property {boolean} [force] To render if was not re-render.
      * @property {string[]} [keep] Views not to be re-rendered. View keys.
      * @since 1.2.15
@@ -1180,7 +1180,7 @@ class View {
     /**
      * Re-render the view.
      *
-     * @param {Bull.View~reRenderOptions|true} [options] Options.
+     * @param {View~reRenderOptions|true} [options] Options.
      * @return {Promise<this>}
      */
     reRender(options = {}) {
@@ -1325,7 +1325,7 @@ class View {
 
     /**
      * @private
-     * @param {Bull.View~nestedViewItemDefs[]} [list]
+     * @param {ViewNestedViewItemDefs[]} [list]
      */
     _addDefinedNestedViewDefs(list) {
         for (const name in this.views) {
@@ -1343,7 +1343,7 @@ class View {
 
     /**
      * @private
-     * @return {Bull.View~nestedViewItemDefs[]}
+     * @return {ViewNestedViewItemDefs[]}
      */
     _getNestedViewDefsFromLayout() {
         const itemList = this._layouter.findNestedViews(this._layoutDefs);
@@ -1392,7 +1392,7 @@ class View {
 
         tryReady();
 
-        nestedViewDefs.forEach(/** Bull.View~nestedViewItemDefs */def => {
+        nestedViewDefs.forEach(/** ViewNestedViewItemDefs */def => {
             const key = def.name;
             let viewName = this._factory.defaultViewName;
             let view;
@@ -1521,7 +1521,7 @@ class View {
     /**
      * @typedef {Record} Bull~nestedItem
      * @property {HTMLTemplateElement|import('snabbdom').VNode} element A template or VNode.
-     * @property {Bull.View} view A view.
+     * @property {View} view A view.
      */
 
     /**
@@ -1921,7 +1921,7 @@ class View {
      * Assign a view instance as nested.
      *
      * @param {string} key A view key.
-     * @param {Bull.View} view A view.
+     * @param {View} view A view.
      * @param {string} [selector] A relative selector.
      * @return {Promise<View>}
      */
@@ -2013,7 +2013,7 @@ class View {
 
     /**
      * @param {string} key
-     * @param {Bull.View} view
+     * @param {View} view
      * @param {function} resolve
      * @param {Promise} promise
      * @param {function} [callback]
@@ -2068,7 +2068,7 @@ class View {
      * Set a nested view.
      *
      * @param {string} key A view key.
-     * @param {Bull.View} view A view name/path.
+     * @param {View} view A view name/path.
      * @param {string} [fullSelector] A full DOM selector for a view container.
      */
     setView(key, view, fullSelector) {
@@ -2130,7 +2130,7 @@ class View {
     /**
      * Get a parent view.
      *
-     * @return {Bull.View}
+     * @return {View}
      */
     getParentView() {
         return this._parentView;
@@ -2513,7 +2513,7 @@ const delegateEventSplitter = /^(\S+)\s*(.*)$/;
  * @param {Object.<string, *>} proto Child prototype.
  * @return this
  * @static
- * @memberof Bull.View
+ * @memberof View
  */
 
 
@@ -2523,7 +2523,7 @@ const delegateEventSplitter = /^(\S+)\s*(.*)$/;
  * @name $el
  * @type {jQuery}
  * @public
- * @memberof Bull.View#
+ * @memberof View#
  */
 
 /**
@@ -2532,7 +2532,7 @@ const delegateEventSplitter = /^(\S+)\s*(.*)$/;
  * @name options
  * @type {Object.<string, *>}
  * @public
- * @memberof Bull.View#
+ * @memberof View#
  */
 
 export default View;
