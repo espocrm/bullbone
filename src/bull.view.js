@@ -31,7 +31,7 @@ const patch = init(
  * @property {string} [name] A view name.
  * @property {BullModel} [model] A model.
  * @property {BullCollection} [collection] A collection.
- * @property {Bull.View.DomEvents} [events] DOM events.
+ * @property {ViewDomEvents} [events] DOM events. @internal
  * @property {boolean} [setViewBeforeCallback] A child view will be set to a parent before a promise is resolved.
  */
 
@@ -44,7 +44,7 @@ const patch = init(
  *
  * @typedef {Object} BullModel
  * @type Object
- * @mixes Bull.Events
+ * @mixes import('./bull.events').default
  */
 
 /**
@@ -66,22 +66,9 @@ const patch = init(
  * @property {string} [el] Deprecated. Use `fullSelector`. A full DOM element selector.
  */
 
-/**
- * After a view is rendered.
- *
- * @event Bull.View#after:render
- */
 
 /**
- * Once a view is ready for rendering (loaded).
- *
- * @event Bull.View#ready
- */
-
-/**
- * Once a view is removed.
- *
- * @event Bull.View#remove
+ * @typedef {'after:render'|'remove'} ViewEvents
  */
 
 /**
@@ -191,7 +178,7 @@ const patch = init(
 /**
  * DOM event listeners.
  *
- * @typedef {Object.<string, ViewDomEventCallback>} Bull.View.DomEvents
+ * @typedef {Object.<string, ViewDomEventCallback>} ViewDomEvents
  */
 
 /**
@@ -212,10 +199,14 @@ const patch = init(
  */
 const elementDelegatedMap = new WeakMap();
 
+
 /**
  * A view.
  *
  * @alias Bull.View
+ *
+ * @template {BullModel|undefined} TModel = undefined
+ * @template {Object|undefined} TCollection = undefined
  */
 class View {
 
@@ -226,10 +217,16 @@ class View {
         this.cid = _.uniqueId('view');
 
         if ('model' in options) {
+            /**
+             * @type {TModel}
+             */
             this.model = options.model;
         }
 
         if ('collection' in options) {
+            /**
+             * @type {TCollection}
+             */
             this.collection = options.collection;
         }
 
@@ -247,6 +244,7 @@ class View {
      * An ID, unique among all views.
      * @type {string}
      * @public
+     * @readonly
      */
     cid
 
@@ -264,6 +262,7 @@ class View {
      *
      * @readonly
      * @type {boolean}
+     * @experimental
      */
     isComponent = false
 
@@ -272,6 +271,7 @@ class View {
      *
      * @readonly
      * @type {boolean}
+     * @experimental
      */
     useVirtualDom = false
 
@@ -283,7 +283,7 @@ class View {
     element
 
     /**
-     * A template name/path.
+     * A template name/path. Prefer `templateContent` instead.
      *
      * @type {string|null}
      * @protected
@@ -299,10 +299,11 @@ class View {
     templateContent = null
 
     /**
-     * DOM event listeners. Recommended to use `addHandler` method instead.
+     * DOM event listeners. Recommended to use the `addHandler` method instead.
      *
-     * @type {Bull.View.DomEvents}
+     * @type {ViewDomEvents}
      * @protected
+     * @internal
      */
     events = null
 
@@ -335,14 +336,16 @@ class View {
      *
      * @type {Object|null}
      * @protected
+     * @internal
      */
     layoutData = null
 
     /**
      * Whether the view is ready for rendering (all necessary data is loaded).
+     * Do not write.
      *
      * @type {boolean}
-     * @public
+     * @protected
      */
     isReady = false
 
@@ -412,7 +415,7 @@ class View {
     /** @private */
     _renderer = null
     /**
-     * @type {Bull.Layouter}
+     * @type {import('./bull.layouter.js').default}
      * @private
      */
     _layouter = null
@@ -535,10 +538,10 @@ class View {
      * as overridden properties not available in a constructor.
      *
      * @param {{
-     *   factory: Bull.Factory,
-     *   renderer: Bull.Renderer,
-     *   templator: Bull.Templator,
-     *   layouter: Bull.Layouter,
+     *   factory: import('./bull.factory.js').default,
+     *   renderer: import('./bull.renderer').default,
+     *   templator: import('./bull.templator.js').default,
+     *   layouter: import('./bull.layouter.js').default,
      *   helper?: Object,
      *   onReady?: function(View): void,
      *   preCompiledTemplates?: Object,
@@ -565,7 +568,7 @@ class View {
         this._templator = data.templator;
 
         /**
-         * @type {Bull.Layouter}
+         * @type {import('./bull.layouter.js').default}
          * @private
          */
         this._layouter = data.layouter;
@@ -2361,7 +2364,7 @@ class View {
     /**
      * Subscribe to an event.
      *
-     * @param {string} name An event.
+     * @param {ViewEvents|string} name An event.
      * @param {EventsCallback} callback A callback.
      * @param {Object} [context] Deprecated.
      */
@@ -2372,7 +2375,7 @@ class View {
     /**
      * Subscribe to an event. Fired once.
      *
-     * @param {string} name An event.
+     * @param {ViewEvents|string} name An event.
      * @param {EventsCallback} callback A callback.
      * @param {Object} [context] Deprecated.
      */
@@ -2383,7 +2386,7 @@ class View {
     /**
      * Unsubscribe from an event or all events.
      *
-     * @param {string} [name] From a specific event.
+     * @param {ViewEvents|string} [name] From a specific event.
      * @param {EventsCallback} [callback] From a specific callback.
      * @param {Object} [context] Deprecated.
      */
@@ -2395,7 +2398,7 @@ class View {
      * Subscribe to an event of other object.
      *
      * @param {Object} other What to listen.
-     * @param {string} name An event.
+     * @param {ViewEvents|string} name An event.
      * @param {EventsCallback} callback A callback.
      */
     listenTo(other, name, callback) {
@@ -2406,7 +2409,7 @@ class View {
      * Subscribe to an event of other object. Fired once. Will be automatically unsubscribed on view removal.
      *
      * @param {Object} other What to listen.
-     * @param {string} name An event.
+     * @param {ViewEvents|string} name An event.
      * @param {EventsCallback} callback A callback.
      */
     listenToOnce(other, name, callback) {
@@ -2417,7 +2420,7 @@ class View {
      * Stop listening to other object. No arguments will remove all listeners.
      *
      * @param {Object} [other] To remove listeners to a specific object.
-     * @param {string} [name] To remove listeners to a specific event.
+     * @param {ViewEvents|string} [name] To remove listeners to a specific event.
      * @param {EventsCallback} [callback] To remove listeners to a specific callback.
      */
     stopListening(other, name, callback) {
