@@ -51,7 +51,7 @@ const eventsApi = (iteratee, events, name, callback, opts) => {
  * Subscribe to an event.
  *
  * @param {string} name An event.
- * @param {Bull.Events~callback} callback A callback.
+ * @param {import('./bull.view.js').EventsCallback} callback A callback.
  * @param {Object} [context] Deprecated.
  */
 Events.on = function (name, callback, context) {
@@ -78,7 +78,7 @@ Events.on = function (name, callback, context) {
  *
  * @param {Object} other What to listen.
  * @param {string} name An event.
- * @param {Bull.Events~callback} callback A callback.
+ * @param {import('./bull.view.js').EventsCallback} callback A callback.
  */
 Events.listenTo = function (other, name, callback) {
     if (!other) {
@@ -142,7 +142,7 @@ const tryCatchOn = (obj, name, callback, context) => {
  * @function off
  * @memberof Bull.Events
  * @param {string} [name] From a specific event.
- * @param {Bull.Events~callback} [callback] From a specific callback.
+ * @param {import('./bull.view.js').EventsCallback}[callback] From a specific callback.
  * @param {Object} [context] Deprecated.
  */
 Events.off = function(name, callback, context) {
@@ -163,7 +163,7 @@ Events.off = function(name, callback, context) {
  *
  * @param {Object} [other] To remove listeners to a specific object.
  * @param {string} [name] To remove listeners to a specific event.
- * @param {Bull.Events~callback} [callback] To remove listeners to a specific callback.
+ * @param {import('./bull.view.js').EventsCallback} [callback] To remove listeners to a specific callback.
  */
 Events.stopListening = function (other, name, callback) {
     let listeningTo = this._listeningTo;
@@ -261,7 +261,7 @@ const offApi = (events, name, callback, options) => {
  * Subscribe to an event. Fired once.
  *
  * @param {string} name An event.
- * @param {Bull.Events~callback} callback A callback.
+ * @param {import('./bull.view.js').EventsCallback} callback A callback.
  * @param {Object} [context] Deprecated.
  */
 Events.once = function (name, callback, context) {
@@ -280,7 +280,7 @@ Events.once = function (name, callback, context) {
  *
  * @param {Object} other What to listen.
  * @param {string} name An event.
- * @param {Bull.Events~callback} callback A callback.
+ * @param {import('./bull.view.js').EventsCallback} callback A callback.
  */
 Events.listenToOnce = function (other, name, callback) {
     // Map the event into a `{event: once}` object.

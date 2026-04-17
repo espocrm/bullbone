@@ -100,7 +100,7 @@ class Factory {
      * Create a view.
      *
      * @param {string} viewName A view name/path.
-     * @param {Bull.View~Options} [options] Options.
+     * @param {import('./bull.view.js').ViewOptions} [options] Options.
      * @param {function(Bull.View)} [callback] Invoked once the view is ready.
      */
     create(viewName, options, callback) {
