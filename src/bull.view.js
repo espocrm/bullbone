@@ -205,8 +205,8 @@ const elementDelegatedMap = new WeakMap();
  *
  * @alias Bull.View
  *
- * @template {BullModel|undefined} TModel = undefined
- * @template {Object|undefined} TCollection = undefined
+ * @template {BullModel|undefined} TModel A model
+ * @template {Object|undefined} TCollection A collection.
  */
 class View {
 
