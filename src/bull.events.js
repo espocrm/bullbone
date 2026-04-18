@@ -69,8 +69,6 @@ Events.on = function (name, callback, context) {
         // callbacks for library interop
         _listening.interop = false;
     }
-
-    return this;
 };
 
 /**
@@ -82,7 +80,7 @@ Events.on = function (name, callback, context) {
  */
 Events.listenTo = function (other, name, callback) {
     if (!other) {
-        return this;
+        return;
     }
 
     let id = other._listenId || (other._listenId = _.uniqueId('l'));
@@ -109,8 +107,6 @@ Events.listenTo = function (other, name, callback) {
     if (listening.interop) {
         listening.on(name, callback);
     }
-
-    return this;
 };
 
 const onApi = (events, name, callback, options) => {
@@ -147,15 +143,13 @@ const tryCatchOn = (obj, name, callback, context) => {
  */
 Events.off = function(name, callback, context) {
     if (!this._events) {
-        return this;
+        return;
     }
 
     this._events = eventsApi(offApi, this._events, name, callback, {
         context: context,
         listeners: this._listeners
     });
-
-    return this;
 };
 
 /**
@@ -169,7 +163,7 @@ Events.stopListening = function (other, name, callback) {
     let listeningTo = this._listeningTo;
 
     if (!listeningTo) {
-        return this;
+        return;
     }
 
     let ids = other ? [other._listenId] : _.keys(listeningTo);
@@ -193,8 +187,6 @@ Events.stopListening = function (other, name, callback) {
     if (_.isEmpty(listeningTo)) {
         this._listeningTo = void 0;
     }
-
-    return this;
 };
 
 const offApi = (events, name, callback, options) => {
@@ -272,7 +264,7 @@ Events.once = function (name, callback, context) {
         callback = void 0;
     }
 
-    return this.on(events, callback, context);
+    this.on(events, callback, context);
 };
 
 /**
@@ -286,7 +278,7 @@ Events.listenToOnce = function (other, name, callback) {
     // Map the event into a `{event: once}` object.
     let events = eventsApi(onceMap, {}, name, callback, this.stopListening.bind(this, other));
 
-    return this.listenTo(other, events);
+    this.listenTo(other, events);
 };
 
 let onceMap = function (map, name, callback, offer) {
@@ -310,7 +302,7 @@ let onceMap = function (map, name, callback, offer) {
  */
 Events.trigger = function(name, ...parameters) {
     if (!this._events) {
-        return this;
+        return;
     }
 
     let length = Math.max(0, arguments.length - 1);
@@ -321,8 +313,6 @@ Events.trigger = function(name, ...parameters) {
     }
 
     eventsApi(triggerApi, this._events, name, void 0, args);
-
-    return this;
 };
 
 const triggerApi = (objEvents, name, callback, args) => {
@@ -384,8 +374,7 @@ Listening.prototype.off = function (name, callback) {
         });
 
         cleanup = !this._events;
-    }
-    else {
+    } else {
         this.count--;
 
         cleanup = this.count === 0;

@@ -84,7 +84,7 @@ const patch = init(
  *
  * @callback ViewDomEventCallback
  *
- * @param {jQuery.Event} e An event.
+ * @param {Record<string, any> & {originalEvent: Event, currentTarget: Element}} e An event.
  */
 
 /**
@@ -2368,10 +2368,11 @@ class View {
      *
      * @param {ViewEvents|string} name An event.
      * @param {EventsCallback} callback A callback.
-     * @param {Object} [context] Deprecated.
      */
-    on(name, callback, context) {
-        return Events.on.call(this, name, callback, context);
+    on(name, callback) {
+        Events.on.call(this, name, callback, arguments[2]);
+
+        return this;
     }
 
     /**
@@ -2379,10 +2380,11 @@ class View {
      *
      * @param {ViewEvents|string} name An event.
      * @param {EventsCallback} callback A callback.
-     * @param {Object} [context] Deprecated.
      */
-    once(name, callback, context) {
-        return Events.once.call(this, name, callback, context);
+    once(name, callback) {
+        Events.once.call(this, name, callback, arguments[2]);
+
+        return this;
     }
 
     /**
@@ -2390,10 +2392,11 @@ class View {
      *
      * @param {ViewEvents|string} [name] From a specific event.
      * @param {EventsCallback} [callback] From a specific callback.
-     * @param {Object} [context] Deprecated.
      */
-    off(name, callback, context) {
-        return Events.off.call(this, name, callback, context);
+    off(name, callback) {
+        Events.off.call(this, name, callback, arguments[2]);
+
+        return this;
     }
 
     /**
@@ -2404,7 +2407,9 @@ class View {
      * @param {EventsCallback} callback A callback.
      */
     listenTo(other, name, callback) {
-        return Events.listenTo.call(this, other, name, callback);
+        Events.listenTo.call(this, other, name, callback);
+
+        return this;
     }
 
     /**
@@ -2415,7 +2420,9 @@ class View {
      * @param {EventsCallback} callback A callback.
      */
     listenToOnce(other, name, callback) {
-        return Events.listenToOnce.call(this, other, name, callback);
+        Events.listenToOnce.call(this, other, name, callback);
+
+        return this;
     }
 
     /**
@@ -2426,7 +2433,9 @@ class View {
      * @param {EventsCallback} [callback] To remove listeners to a specific callback.
      */
     stopListening(other, name, callback) {
-        return Events.stopListening.call(this, other, name, callback);
+        Events.stopListening.call(this, other, name, callback);
+
+        return this;
     }
 
     /**
@@ -2436,7 +2445,9 @@ class View {
      * @param {...*} parameters Arguments.
      */
     trigger(name, ...parameters) {
-        return Events.trigger.call(this, name, ...parameters);
+        Events.trigger.call(this, name, ...parameters);
+
+        return this;
     }
 }
 
