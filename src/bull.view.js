@@ -394,6 +394,8 @@ class View {
      * A helper.
      *
      * @protected
+     * @type {object|null}
+     * @internal
      */
     _helper = null
 
