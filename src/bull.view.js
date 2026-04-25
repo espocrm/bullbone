@@ -2372,6 +2372,7 @@ class View {
      * @param {EventsCallback} callback A callback.
      */
     on(name, callback) {
+        // The context argument is needed.
         Events.on.call(this, name, callback, arguments[2]);
 
         return this;
@@ -2384,6 +2385,7 @@ class View {
      * @param {EventsCallback} callback A callback.
      */
     once(name, callback) {
+        // The context argument is needed.
         Events.once.call(this, name, callback, arguments[2]);
 
         return this;
@@ -2396,6 +2398,7 @@ class View {
      * @param {EventsCallback} [callback] From a specific callback.
      */
     off(name, callback) {
+        // The context argument is needed.
         Events.off.call(this, name, callback, arguments[2]);
 
         return this;
