@@ -1783,8 +1783,9 @@ class View {
     }
 
     /**
-     * @private
+     * @protected
      * @return {string|null}
+     * @internal
      */
     _getTemplateName() {
         return this.template || null;
