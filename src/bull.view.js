@@ -1895,14 +1895,17 @@ class View {
         return key in this.nestedViews;
     }
 
+    // noinspection JSValidateJSDoc
     /**
      * Get a nested view.
      *
      * @param {string} key A view key.
-     * @return {View|null}
+     * @return {T|null}
+     * @template {View} [T=View]
      */
     getView(key) {
         if (key in this.nestedViews) {
+            // noinspection JSValidateTypes
             return this.nestedViews[key];
         }
 
@@ -1965,6 +1968,7 @@ class View {
         return promise;
     }
 
+    // noinspection JSValidateJSDoc
     /**
      * Create a nested view. The important method.
      *
@@ -1973,7 +1977,8 @@ class View {
      * @param {ViewOptions} options View options. Custom options can be passed as well.
      * @param {Function} [callback] Deprecated. Use a promise. Invoked once a nested view is ready (loaded).
      * @param {boolean} [wait=true] Set false if no need a parent view to wait till nested view loaded.
-     * @return {Promise<View>}
+     * @return {Promise<T>}
+     * @template {View} [T=View]
      */
     createView(key, viewName, options, callback, wait) {
         this.clearView(key);
