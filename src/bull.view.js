@@ -1598,6 +1598,7 @@ class View {
      * Provides the ability to modify template data right before render.
      *
      * @param {Object.<string, *>} data Data.
+     * @protected
      */
     handleDataBeforeRender(data) {}
 
