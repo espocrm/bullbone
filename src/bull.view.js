@@ -90,13 +90,11 @@ const patch = init(
 /**
  * A DOM event handler callback.
  *
+ * @template K
+ * @template {HTMLElement} T
  * @callback ViewDomEventHandlerCallback
- * @param {Event} event An event.
- * @param {HTMLElement} A target element.
- */
-
-/**
- * @typedef {'click'|'mousedown'|'keydown'|string} ViewDomEventType
+ * @param {HTMLElementEventMap[K]} event An event.
+ * @param {T} A target element.
  */
 
 /**
@@ -510,9 +508,11 @@ class View {
     /**
      * Add a DOM event handler. To be called in `setup` method.
      *
-     * @param {ViewDomEventType} type An event type.
+     * @template {HTMLElement} [T=HTMLElement]
+     * @template {keyof HTMLElementEventMap} [K=keyof HTMLElementEventMap]
+     * @param {K} type An event type.
      * @param {string} selector A CSS selector.
-     * @param {ViewDomEventHandlerCallback|string} handler A handler.
+     * @param {ViewDomEventHandlerCallback<K, T>|string} handler A handler.
      */
     addHandler(type, selector, handler) {
         const key = type + ' ' + selector;
