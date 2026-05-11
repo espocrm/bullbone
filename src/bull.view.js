@@ -76,11 +76,7 @@ const patch = init(
  */
 
 /**
- * @typedef {import('snabbdom').VNode} VNode
- */
-
-/**
- * @typedef {import('snabbdom').VNodeData} VNodeData
+ * @typedef {import('./module-util.ts').VNode} VNode
  */
 
 /**

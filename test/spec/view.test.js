@@ -752,19 +752,19 @@ describe('View', function () {
         $('body').append($div);
 
         class Component extends View {
-            isComponent = true
+            isStandaloneComponent = true
             templateContent = `<button>test</button>`
         }
 
         class ComponentHello extends View {
-            isComponent = true
+            isStandaloneComponent = true
             notToRender = true
 
             templateContent = `<a>hello</a>`
         }
 
         class ComponentN1 extends View {
-            isComponent = true
+            isStandaloneComponent = true
             templateContent = `<div class="n2">{{{n2}}}</div>`
 
             setup() {
@@ -773,7 +773,7 @@ describe('View', function () {
         }
 
         class ComponentN2 extends View {
-            isComponent = true
+            isStandaloneComponent = true
             templateContent = `<div>n2</div>`
         }
 
@@ -985,7 +985,7 @@ describe('View', function () {
         class Child2View extends View {
             templateContent = `<div>2</div>`
 
-            isComponent = true
+            isStandaloneComponent = true
         }
 
         class ParentView extends View {
@@ -1026,7 +1026,7 @@ describe('View', function () {
         class Child2View extends View {
             templateContent = `<div>2</div>`
 
-            isComponent = true
+            isStandaloneComponent = true
         }
 
         class ParentView extends View {
@@ -1091,7 +1091,7 @@ describe('View', function () {
         }
 
         class ChildView6 extends View {
-            isComponent = true
+            isStandaloneComponent = true
 
             value = 'c6'
 
@@ -1105,7 +1105,7 @@ describe('View', function () {
         }
 
         class ChildView8 extends View {
-            isComponent = true
+            isStandaloneComponent = true
 
             value = 'c8'
 

@@ -1,7 +1,7 @@
 import dts from 'rollup-plugin-dts';
 
 export default {
-    input: 'dist/types/bullbone.d.ts',
+    input: 'dist/types/entry.d.ts',
     output: {
         file: 'dist/bullbone.d.ts',
         format: 'es'
