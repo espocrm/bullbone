@@ -713,6 +713,7 @@ class View {
      * A view content.
      *
      * @return {VNode|undefined}
+     * @protected
      * @experimental
      */
     content() {

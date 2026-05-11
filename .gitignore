@@ -1,4 +1,5 @@
 dist/
+build/
 node_modules/
 test/lib
 package-lock.json
