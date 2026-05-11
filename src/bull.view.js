@@ -3,10 +3,19 @@
 import Events from './bull.events.js';
 import $ from 'jquery';
 import _ from 'underscore';
-import {h, init, datasetModule} from 'snabbdom';
+import {
+    h,
+    init,
+    datasetModule,
+    classModule,
+    attributesModule,
+    styleModule,
+    propsModule,
+    eventListenersModule,
+} from 'snabbdom';
 
 const patch = init(
-    [datasetModule],
+    [datasetModule, classModule, attributesModule, styleModule, propsModule, eventListenersModule],
     undefined,
     {experimental: {fragments: true}}
 );
@@ -66,6 +75,13 @@ const patch = init(
  * @property {string} [el] Deprecated. Use `fullSelector`. A full DOM element selector.
  */
 
+/**
+ * @typedef {import('snabbdom').VNode} VNode
+ */
+
+/**
+ * @typedef {import('snabbdom').VNodeData} VNodeData
+ */
 
 /**
  * @typedef {'after:render'|'remove'} ViewEvents
@@ -76,7 +92,7 @@ const patch = init(
  *
  * @callback ViewGetPreparedElementCallback
  *
- * @param {HTMLTemplateElement|import('snabbdom').VNode} element An element.
+ * @param {HTMLTemplateElement|VNode} element An element.
  */
 
 /**
@@ -253,7 +269,7 @@ class View {
     _elementSelector
 
     /**
-     * Is component. Components does not require a DOM container defined by a parent view.
+     * Standalone components do not require a DOM container defined by the parent view.
      * Should have one root DOM element.
      *
      * An experimental feature.
@@ -262,7 +278,7 @@ class View {
      * @type {boolean}
      * @experimental
      */
-    isComponent = false
+    isStandaloneComponent = false
 
     /**
      * Use virtual dom.
@@ -315,7 +331,7 @@ class View {
     notToRender = false
 
     /**
-     * @type {import('snabbdom').VNode|undefined}
+     * @type {VNode|undefined}
      * @private
      */
     _vNode
@@ -700,7 +716,7 @@ class View {
     /**
      * A view content.
      *
-     * @return {import('snabbdom').VNode|undefined}
+     * @return {VNode|undefined}
      * @experimental
      */
     content() {
@@ -710,7 +726,7 @@ class View {
     /**
      * To be called in the content method of a parent view to get the child content.
      *
-     * @return {import('snabbdom').VNode|undefined}
+     * @return {VNode|undefined}
      * @experimental
      */
     node() {
@@ -735,13 +751,13 @@ class View {
 
 
     /**
-     * @type {import('snabbdom').VNode|undefined}
+     * @type {VNode|undefined}
      * @private
      */
     _memoryVnode
 
     /**
-     * @return {import('snabbdom').VNode}
+     * @return {VNode}
      * @private
      */
     _nodeNonVirtualDom() {
@@ -751,7 +767,7 @@ class View {
 
                 const first = nodes[0];
 
-                if (this.isComponent) {
+                if (this.isStandaloneComponent) {
                     const element = oldVNode.elm;
 
                     if (!(first instanceof HTMLElement)) {
@@ -811,7 +827,7 @@ class View {
 
                     const first = nodes[0];
 
-                    if (this.isComponent) {
+                    if (this.isStandaloneComponent) {
                         if (!first) {
                             return;
                         }
@@ -841,7 +857,7 @@ class View {
                         }
                     }
 
-                    if (this.isComponent) {
+                    if (this.isStandaloneComponent) {
                         vNode.elm = first;
 
                         if (first instanceof HTMLElement) {
@@ -1012,7 +1028,7 @@ class View {
 
                 if (this.useVirtualDom) {
                     this._patchVNode(element);
-                } else if (this.isComponent) {
+                } else if (this.isStandaloneComponent) {
                     this._renderComponentInDom(element);
                 } else {
                     this._renderInDom(element);
@@ -1026,7 +1042,7 @@ class View {
                     console.warn(message);
                 }
 
-                if (!this.useVirtualDom && this._memoryVnode && this.isComponent) {
+                if (!this.useVirtualDom && this._memoryVnode && this.isStandaloneComponent) {
                     this._memoryVnode.elm = this.element;
                 }
 
@@ -1045,7 +1061,7 @@ class View {
     }
 
     /**
-     * @param {import('snabbdom').VNode} vNode
+     * @param {VNode} vNode
      * @param {boolean} [fromNotVirtualDom]
      * @internal
      */
@@ -1078,8 +1094,6 @@ class View {
         if (!vNode.sel) {
             this.element.setAttribute('data-view-cid', this.cid);
         }
-
-        console.log(target, vNode);
 
         patch(target, vNode);
 
@@ -1527,7 +1541,7 @@ class View {
 
     /**
      * @typedef {Record} Bull~nestedItem
-     * @property {HTMLTemplateElement|import('snabbdom').VNode} element A template or VNode.
+     * @property {HTMLTemplateElement|VNode} element A template or VNode.
      * @property {View} view A view.
      */
 
@@ -1565,7 +1579,7 @@ class View {
                 };
 
                 if (view._keepElementOnRender && view.element) {
-                    if (view.isComponent) {
+                    if (view.isStandaloneComponent) {
                         templateElement.content.appendChild(view.element);
                     } else {
                         templateElement.content.append(...view.element.childNodes);
@@ -1677,7 +1691,7 @@ class View {
                         this._prepareNestedElementInPlaceholder(item, placeholder, element);
                     }
 
-                    if (!this.isComponent) {
+                    if (!this.isStandaloneComponent) {
                         callback(templateElement);
 
                         return;
@@ -1709,7 +1723,7 @@ class View {
      */
     _prepareNestedElementInPlaceholder(item, placeholder, element) {
         if (item.view.useVirtualDom) {
-            const vNode = /** @type {import('snabbdom').VNode} */item.element;
+            const vNode = /** @type {VNode} */item.element;
             const view = item.view;
 
             if (vNode.sel) {
@@ -1741,7 +1755,7 @@ class View {
             return;
         }
 
-        if (item.view.isComponent) {
+        if (item.view.isStandaloneComponent) {
             let newElement = placeholder;
 
             if (element.content.children.length) {
@@ -2264,7 +2278,7 @@ class View {
         this.off();
 
         if (!dontEmpty) {
-            this.isComponent ?
+            this.isStandaloneComponent ?
                 this._replaceWithPlaceholderElement() :
                 this.$el.empty();
         }
