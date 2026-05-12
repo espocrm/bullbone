@@ -1266,7 +1266,7 @@ describe('View', function () {
             value = 'c2'
 
             content() {
-                return h('div', {}, this.value);
+                return h('div', {props: {id: 'span-2'}}, this.value);
             }
 
             // @todo Sub-views.
@@ -1294,7 +1294,15 @@ describe('View', function () {
 
         await parent.render();
 
-        // @todo Re-render, remove/add sub-views.
+        expect(parent.element.querySelector('#span-1 > span')?.innerHTML === 'c1').toBeTrue();
+        expect(parent.element.querySelector('#span-2')?.innerHTML === 'c2').toBeTrue();
+
+        await parent.reRender();
+
+        expect(parent.element.querySelector('#span-1 > span')?.innerHTML === 'c1').toBeTrue();
+        expect(parent.element.querySelector('#span-2')?.innerHTML === 'c2').toBeTrue();
+
+        // @todo Remove/add sub-views.
 
         container.remove();
     });

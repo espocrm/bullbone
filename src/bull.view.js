@@ -1077,6 +1077,10 @@ class View {
      * @internal
      */
     _patchVNode(vNode, fromNotVirtualDom = false) {
+        if (fromNotVirtualDom) {
+            this.element = null;
+        }
+
         if (!this.element && this._elementSelector) {
             this._setElement(this._elementSelector);
         }
