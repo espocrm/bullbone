@@ -1112,6 +1112,12 @@ class View {
 
         patch(target, vNode);
 
+        if (fromNotVirtualDom) {
+            this.element = null;
+
+            this.setElementInAdvance(this._elementSelector)
+        }
+
         this._vNode = vNode;
 
         this._visitSubViewsAfterPatch();

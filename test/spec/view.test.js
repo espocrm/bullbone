@@ -1112,6 +1112,52 @@ describe('View', function () {
             templateContent = `<div id="span-8">{{viewObject.value}}</div>`
         }
 
+        class SubViewH extends View {
+            useVirtualDom = true
+
+            value = 'c9'
+
+            content() {
+                return h('div#span-9', {}, this.value);
+            }
+        }
+
+        class SubViewF extends View {
+            useVirtualDom = true
+
+            value = 's10'
+
+            content() {
+                return fragment([h('div#span-10', {}, this.value)]);
+            }
+        }
+
+        class ChildView9 extends View {
+            useVirtualDom = true
+
+            setup() {
+                this.subView = new SubViewH();
+                this.assignView('sub', this.subView);
+            }
+
+            content() {
+                return h('div#span-9', {}, this.subView.node());
+            }
+        }
+
+        class ChildView10 extends View {
+            useVirtualDom = true
+
+            setup() {
+                this.subView = new SubViewF();
+                this.assignView('sub', this.subView);
+            }
+
+            content() {
+                return h('div#span-10', {}, [this.subView.node()]);
+            }
+        }
+
         class ParentView extends View {
             useVirtualDom = true
 
@@ -1139,6 +1185,12 @@ describe('View', function () {
 
                 this.child8 = new ChildView8();
                 this.assignView('child8', this.child8);
+
+                this.child9 = new ChildView9();
+                this.assignView('child9', this.child9);
+
+                this.child10 = new ChildView10();
+                this.assignView('child10', this.child10);
             }
 
             content() {
@@ -1163,6 +1215,8 @@ describe('View', function () {
                                 h('div#span-7', {}, [this.child7.node()]),
                                 this.child8.node(),
                             ] : []),
+                            this.child9.node(),
+                            this.child10.node(),
                         ],
                     )
                 ]);
@@ -1223,6 +1277,8 @@ describe('View', function () {
         expect(parent.element.querySelector('#span-5 > div').textContent).toBe('c5m');
         expect(parent.element.querySelector('#span-6').textContent).toBe('c6m');
 
+        expect(parent.child9.subView.element).toBeInstanceOf(HTMLDivElement);
+
         parent.a = false;
         parent.b = true;
 
@@ -1233,6 +1289,12 @@ describe('View', function () {
 
         expect(parent.element.querySelector('#span-7 > div').textContent).toBe('c7');
         expect(parent.element.querySelector('#span-8').textContent).toBe('c8');
+
+        expect(parent.child9.subView.element).toBeInstanceOf(HTMLDivElement);
+
+        expect(container.contains(parent.child9.subView.element)).toBeTrue();
+
+        expect(container.contains(parent.child10.subView.element)).toBeTrue();
 
         container.remove();
 
@@ -1245,6 +1307,24 @@ describe('View', function () {
         container.id = 'test-root'
 
         document.body.append(container);
+
+        class SubViewH extends View {
+            useVirtualDom = true
+
+            content() {
+                return h('span', {}, 's3');
+            }
+        }
+
+        class SubViewF extends View {
+            useVirtualDom = true
+
+            content() {
+                return fragment([
+                    h('span', {}, 's-f'),
+                ]);
+            }
+        }
 
         class Child1View extends View {
             useVirtualDom = true
@@ -1268,8 +1348,40 @@ describe('View', function () {
             content() {
                 return h('div', {props: {id: 'span-2'}}, this.value);
             }
+        }
 
-            // @todo Sub-views.
+        class Child3View extends View {
+            useVirtualDom = true
+
+            value = 'c3'
+
+            setup() {
+                this.subView = new SubViewH();
+
+                this.assignView('sub', this.subView);
+            }
+
+            content() {
+                return h('div', {props: {id: 'span-3'}}, this.subView.node());
+            }
+
+            // @todo The same but return a fragment.
+        }
+
+        class Child4View extends View {
+            useVirtualDom = true
+
+            setup() {
+                this.subView = new SubViewF();
+
+                this.assignView('sub', this.subView);
+            }
+
+            content() {
+                return h('div', {props: {id: 'span-4'}}, [this.subView.node()]);
+            }
+
+            // @todo The same but return a fragment.
         }
 
         class ParentView extends View {
@@ -1277,14 +1389,20 @@ describe('View', function () {
             templateContent = `
                 <div id="span-1">{{{child1}}}</div>
                 {{{child2}}}
+                {{{child3}}}
+                {{{child4}}}
             `
 
             setup() {
                 this.child1 = new Child1View();
                 this.child2 = new Child2View();
+                this.child3 = new Child3View();
+                this.child4 = new Child4View();
 
                 this.assignView('child1', this.child1);
                 this.assignView('child2', this.child2);
+                this.assignView('child3', this.child3);
+                this.assignView('child4', this.child4);
             }
         }
 
@@ -1294,13 +1412,22 @@ describe('View', function () {
 
         await parent.render();
 
+
         expect(parent.element.querySelector('#span-1 > span')?.innerHTML === 'c1').toBeTrue();
         expect(parent.element.querySelector('#span-2')?.innerHTML === 'c2').toBeTrue();
+        expect(parent.element.querySelector('#span-3 > span')?.innerHTML).toBe('s3');
 
         await parent.reRender();
 
         expect(parent.element.querySelector('#span-1 > span')?.innerHTML === 'c1').toBeTrue();
         expect(parent.element.querySelector('#span-2')?.innerHTML === 'c2').toBeTrue();
+
+        expect(parent.child1.element.tagName).toBe('DIV');
+        expect(parent.child2.element.tagName).toBe('DIV');
+
+        expect(parent.child3.subView.element.tagName).toBe('SPAN');
+
+        // @todo Re-render child3 view. Check the sub view's element.
 
         // @todo Remove/add sub-views.
 
