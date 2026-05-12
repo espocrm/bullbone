@@ -203,6 +203,14 @@ const patch = init(
  */
 
 /**
+ * @typedef {Object} ReRenderOptions
+ * @property {boolean} [force] To render if was not re-render.
+ * @property {boolean} [buffer] Prevents multiple re-renders when called multiple times.
+ * @property {string[]} [keep] Views not to be re-rendered. View keys.
+ * @since 1.2.15
+ */
+
+/**
  * Stores indications to elements with already delegated events.
  *
  * @type {WeakMap<HTMLElement, true>}
@@ -1189,13 +1197,6 @@ class View {
         this.element.replaceChildren(...childNodes);
     }
 
-    /**
-     * @typedef {Object} View~reRenderOptions
-     * @property {boolean} [force] To render if was not re-render.
-     * @property {boolean} [buffer] Prevents multiple re-renders when called multiple times.
-     * @property {string[]} [keep] Views not to be re-rendered. View keys.
-     * @since 1.2.15
-     */
 
     /**
      * @private
@@ -1205,7 +1206,7 @@ class View {
     /**
      * Re-render the view.
      *
-     * @param {View~reRenderOptions|true} [options] Options.
+     * @param {ReRenderOptions|true} [options] Options.
      * @return {Promise<this>}
      */
     reRender(options = {}) {
