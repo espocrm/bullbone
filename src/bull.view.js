@@ -4,14 +4,14 @@ import Events from './bull.events.js';
 import $ from 'jquery';
 import _ from 'underscore';
 import {
+    attributesModule,
+    classModule,
+    datasetModule,
+    eventListenersModule,
     h,
     init,
-    datasetModule,
-    classModule,
-    attributesModule,
-    styleModule,
     propsModule,
-    eventListenersModule,
+    styleModule,
 } from 'snabbdom';
 
 const patch = init(
@@ -208,6 +208,12 @@ const patch = init(
  * @type {WeakMap<HTMLElement, true>}
  */
 const elementDelegatedMap = new WeakMap();
+
+/**
+ *
+ * @type {WeakMap<View, Promise<View>>}
+ */
+const reRenderViewMap = new WeakMap();
 
 
 /**
@@ -1186,6 +1192,7 @@ class View {
     /**
      * @typedef {Object} View~reRenderOptions
      * @property {boolean} [force] To render if was not re-render.
+     * @property {boolean} [buffer] Prevents multiple re-renders when called multiple times.
      * @property {string[]} [keep] Views not to be re-rendered. View keys.
      * @since 1.2.15
      */
@@ -1206,40 +1213,74 @@ class View {
             options = {force: options};
         }
 
+        if (reRenderViewMap.has(this)) {
+            return reRenderViewMap.get(this);
+        }
+
         const hasKeep = options.keep && options.keep.length;
+        const force = options.force ?? false;
+        const keep = options.keep;
 
-        if (hasKeep && (this.isRendered() || this.isBeingRendered())) {
-            for (const key of options.keep) {
-                const subView = this.getView(key);
+        const process = () => {
+            if (hasKeep && (this.isRendered() || this.isBeingRendered())) {
+                for (const key of keep) {
+                    const subView = this.getView(key);
 
-                if (!subView) {
-                    continue;
+                    if (!subView) {
+                        continue;
+                    }
+
+                    subView._keepElementOnRender = true;
                 }
-
-                subView._keepElementOnRender = true;
             }
-        }
 
-        if (this.isRendered()) {
-            return this.render();
-        }
+            if (this.isRendered()) {
+                return this.render();
+            }
 
-        if (this.isBeingRendered()) {
-            return new Promise((resolve, reject) => {
-                this.once('after:render', () => {
-                    this.render()
-                        .then(() => resolve(this))
-                        .catch(reject);
+            if (this.isBeingRendered()) {
+                return new Promise((resolve, reject) => {
+                    this.once('after:render', () => {
+                        this.render()
+                            .then(() => resolve(this))
+                            .catch(reject);
+                    });
                 });
-            });
+            }
+
+            if (force) {
+                return this.render();
+            }
+
+            // Don't reject, preventing an exception on a non-caught promise.
+            return new Promise(() => {});
+        };
+
+        if (!options.buffer) {
+            return process();
         }
 
-        if (options.force) {
-            return this.render();
-        }
+        let resolvePromise;
+        let rejectPromise;
 
-        // Don't reject, preventing an exception on a non-caught promise.
-        return new Promise(() => {});
+        const promise = new Promise((resolve, reject) => {
+            resolvePromise = resolve;
+            rejectPromise = reject;
+        });
+
+        reRenderViewMap.set(this, promise);
+
+        queueMicrotask(() => {
+            process()
+                .then(() => {
+                    resolvePromise(this);
+                })
+                .catch(() => rejectPromise());
+
+            reRenderViewMap.delete(this);
+        });
+
+        return promise;
     }
 
     /** @private */

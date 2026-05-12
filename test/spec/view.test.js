@@ -1296,6 +1296,44 @@ describe('View', function () {
 
         // @todo Re-render, remove/add sub-views.
 
-        //container.remove();
+        container.remove();
+    });
+
+    it('should batch render', async () => {
+        const container = document.createElement('div');
+        container.id = 'test-root'
+
+        document.body.append(container);
+
+        class View1 extends View {
+            useVirtualDom = true
+
+            counter = 0
+
+            content() {
+                return h('div', {});
+            }
+
+            afterRender() {
+                this.counter ++;
+            }
+        }
+
+        const view = new View1({fullSelector: '#test-root'});
+
+        view._initialize(viewData);
+
+        await view.render();
+
+        await Promise.all([
+            view.reRender({buffer: true}),
+            view.reRender({buffer: true}),
+            view.reRender({buffer: true}),
+            view.reRender(),
+        ]);
+
+        expect(view.counter).toBe(2);
+
+        container.remove();
     });
 });
