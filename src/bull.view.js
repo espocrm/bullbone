@@ -3,22 +3,9 @@
 import Events from './bull.events.js';
 import $ from 'jquery';
 import _ from 'underscore';
-import {
-    attributesModule,
-    classModule,
-    datasetModule,
-    eventListenersModule,
-    h,
-    init,
-    propsModule,
-    styleModule,
-} from 'snabbdom';
+import {h} from 'snabbdom';
 
-const patch = init(
-    [datasetModule, classModule, attributesModule, styleModule, propsModule, eventListenersModule],
-    undefined,
-    {experimental: {fragments: true}}
-);
+import {patch} from './util.js';
 
 /**
  * View options passed to a view on creation.

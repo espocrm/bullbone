@@ -1,3 +1,10 @@
-import {h, fragment, VNode, VNodeData} from 'snabbdom';
+import {
+    h,
+    fragment,
+    VNode,
+    VNodeData,
+} from 'snabbdom';
 
-export {h, fragment, VNode, VNodeData};
+import {patch} from './util';
+
+export {h, fragment, VNode, VNodeData, patch};

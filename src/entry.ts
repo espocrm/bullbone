@@ -4,5 +4,5 @@ import View from './bull.view.js';
 import Factory from './bull.factory.js';
 import {h, fragment, toVNode} from 'snabbdom';
 
-export {VNode, VNodeData} from './module-util';
+export {VNode, VNodeData, patch} from './module-util';
 export {View, Events, Factory, h, fragment, toVNode};
